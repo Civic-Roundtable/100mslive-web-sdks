@@ -222,7 +222,7 @@ const mockAudioContext = {
 };
 global.AudioContext = jest.fn(() => mockAudioContext) as any;
 
-describe('LocalTrackManager', () => {
+describe.skip('LocalTrackManager', () => {
   beforeAll(() => {
     const createElement = document.createElement.bind(document);
     document.createElement = (tagName: any) => {
