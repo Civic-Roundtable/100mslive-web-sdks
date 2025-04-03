@@ -32,7 +32,6 @@ export const VBToggle = () => {
   useEffect(() => {
     if (!toggleVideo) {
       VBHandler?.reset();
-      // TODO-AQ do we need to change localStorage?
       hmsActions.setAppData(APP_DATA.background, HMSVirtualBackgroundTypes.NONE);
     }
   }, [hmsActions, toggleVideo]);
