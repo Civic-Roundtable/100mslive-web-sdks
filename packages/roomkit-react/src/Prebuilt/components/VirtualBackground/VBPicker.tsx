@@ -214,9 +214,8 @@ export const VBPicker = ({ backgroundMedia = [] }: { backgroundMedia: VirtualBac
                   showTooltip={false}
                   value={[background.blurAmount]}
                   onValueChange={async e => {
-                    const blurAmount = e[0];
-                    await VBHandler.setBlur(blurAmount);
-                    setBackground({ type: HMSVirtualBackgroundTypes.BLUR, blurAmount });
+                    setBackground({ type: HMSVirtualBackgroundTypes.BLUR, blurAmount: e[0] });
+                    await VBHandler.setBlur(e[0]);
                   }}
                   step={0.1}
                   min={0.1}
