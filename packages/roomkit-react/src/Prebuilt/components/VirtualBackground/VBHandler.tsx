@@ -3,6 +3,17 @@
 import { HMSVBPlugin, HMSVirtualBackgroundTypes } from '@100mslive/hms-virtual-background/hmsvbplugin';
 import { parsedUserAgent } from '@100mslive/react-sdk';
 import { isIOS, isSafari } from '../../common/constants';
+
+// Local storage key for virtual background settings
+const VB_STORAGE_KEY = 'hms_virtual_background_settings';
+
+// Interface for storing virtual background settings
+interface VBSettings {
+  backgroundType: string;
+  backgroundValue: string;
+  blurAmount: number;
+}
+
 export class VBPlugin {
   private hmsPlugin?: HMSVBPlugin;
   private effectsPlugin?: any;
@@ -23,6 +34,42 @@ export class VBPlugin {
     } else {
       this.hmsPlugin = new HMSVBPlugin(HMSVirtualBackgroundTypes.NONE, HMSVirtualBackgroundTypes.NONE);
     }
+  };
+
+  saveBackgroundSettings = (backgroundValue: string, blurAmount?: number) => {
+    try {
+      // Determine background type
+      let backgroundType = 'image';
+      if (backgroundValue === HMSVirtualBackgroundTypes.NONE) {
+        backgroundType = 'none';
+      } else if (backgroundValue === HMSVirtualBackgroundTypes.BLUR) {
+        backgroundType = 'blur';
+      }
+
+      // Create settings object
+      const settings: VBSettings = {
+        backgroundType,
+        backgroundValue,
+        blurAmount: blurAmount || this.getBlurAmount() || 0.5,
+      };
+
+      // Save to localStorage
+      localStorage.setItem(VB_STORAGE_KEY, JSON.stringify(settings));
+    } catch (err) {
+      console.error('Failed to save virtual background settings:', err);
+    }
+  };
+
+  loadBackgroundSettings = (): VBSettings | null => {
+    try {
+      const savedSettings = localStorage.getItem(VB_STORAGE_KEY);
+      if (savedSettings) {
+        return JSON.parse(savedSettings);
+      }
+    } catch (err) {
+      console.error('Failed to load virtual background settings:', err);
+    }
+    return null;
   };
 
   getBackground = () => {
@@ -58,6 +105,8 @@ export class VBPlugin {
     } else {
       await this.hmsPlugin?.setBackground(HMSVirtualBackgroundTypes.BLUR, HMSVirtualBackgroundTypes.BLUR);
     }
+    // Save the blur setting to localStorage
+    this.saveBackgroundSettings(HMSVirtualBackgroundTypes.BLUR, blurPower);
   };
 
   setBackground = async (mediaURL: string) => {
@@ -78,6 +127,8 @@ export class VBPlugin {
         }
       }
     }
+    // Save the background setting to localStorage
+    this.saveBackgroundSettings(mediaURL);
   };
 
   setPreset = async (preset: 'quality' | 'balanced') => {
@@ -96,6 +147,8 @@ export class VBPlugin {
     } else {
       await this.hmsPlugin?.setBackground(HMSVirtualBackgroundTypes.NONE, HMSVirtualBackgroundTypes.NONE);
     }
+    // Save the 'no effects' setting to localStorage
+    this.saveBackgroundSettings(HMSVirtualBackgroundTypes.NONE);
   };
 
   reset = () => {

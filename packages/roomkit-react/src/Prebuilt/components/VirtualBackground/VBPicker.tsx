@@ -45,7 +45,8 @@ export const VBPicker = ({ backgroundMedia = [] }: { backgroundMedia: VirtualBac
   const mirrorLocalVideo = useUISettings(UI_SETTINGS.mirrorLocalVideo);
   const trackSelector = selectVideoTrackByID(localPeer?.videoTrack);
   const track = useHMSStore(trackSelector);
-  const [blurAmount, setBlurAmount] = useState(VBHandler.getBlurAmount() || 0.5);
+  const savedSettings = VBHandler.loadBackgroundSettings();
+  const [blurAmount, setBlurAmount] = useState(savedSettings?.blurAmount || VBHandler.getBlurAmount() || 0.5);
   const roomState = useHMSStore(selectRoomState);
   const isLargeRoom = useHMSStore(selectIsLargeRoom);
   const isEffectsSupported = VBHandler.isEffectsSupported();
@@ -98,14 +99,36 @@ export const VBPicker = ({ backgroundMedia = [] }: { backgroundMedia: VirtualBac
         }
 
         const handleDefaultBackground = async () => {
-          switch (background) {
-            case HMSVirtualBackgroundTypes.NONE:
-              break;
-            case HMSVirtualBackgroundTypes.BLUR:
-              await VBHandler.setBlur(blurAmount);
-              break;
-            default:
-              await VBHandler.setBackground(background);
+          // Check if we have a current background in app data
+          if (background && background !== HMSVirtualBackgroundTypes.NONE) {
+            switch (background) {
+              case HMSVirtualBackgroundTypes.BLUR:
+                await VBHandler.setBlur(blurAmount);
+                break;
+              default:
+                await VBHandler.setBackground(background);
+            }
+          }
+          // If no current background or it's NONE, try to apply saved background from localStorage
+          else if (savedSettings && savedSettings.backgroundValue !== HMSVirtualBackgroundTypes.NONE) {
+            switch (savedSettings.backgroundType) {
+              case 'blur':
+                await VBHandler.setBlur(savedSettings.blurAmount);
+                // Update the app data to reflect the loaded setting
+                hmsActions.setAppData(APP_DATA.background, HMSVirtualBackgroundTypes.BLUR);
+                setBlurAmount(savedSettings.blurAmount);
+                break;
+              case 'image':
+                // Check if the saved URL is in the available background list
+                if (mediaList.includes(savedSettings.backgroundValue)) {
+                  await VBHandler.setBackground(savedSettings.backgroundValue);
+                  // Update the app data to reflect the loaded setting
+                  hmsActions.setAppData(APP_DATA.background, savedSettings.backgroundValue);
+                }
+                break;
+              default:
+                break;
+            }
           }
         };
 
@@ -128,6 +151,8 @@ export const VBPicker = ({ backgroundMedia = [] }: { backgroundMedia: VirtualBac
     background,
     blurAmount,
     setLoadingEffects,
+    savedSettings,
+    mediaList,
   ]);
 
   useEffect(() => {
