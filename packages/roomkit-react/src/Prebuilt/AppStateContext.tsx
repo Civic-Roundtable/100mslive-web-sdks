@@ -80,7 +80,6 @@ export const useAppStateManager = () => {
               .otherwise(() => PrebuiltStates.MEETING);
           });
           VBHandler.reset();
-          // TODO-AQ do we need to change localStorage?
           hmsActions.setAppData(APP_DATA.background, HMSVirtualBackgroundTypes.NONE);
           redirectToLeave(1000); // to clear toasts after 1 second
         },
