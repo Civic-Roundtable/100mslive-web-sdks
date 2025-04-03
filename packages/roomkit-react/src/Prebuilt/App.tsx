@@ -29,6 +29,7 @@ import { PIPProvider } from './components/PIP/PIPProvider';
 import { PreviewScreen } from './components/Preview/PreviewScreen';
 // @ts-ignore: No implicit Any
 import { ToastContainer } from './components/Toast/ToastContainer';
+import { VBAutoLoader } from './components/VirtualBackground/VBAutoLoader';
 import { Sheet } from './layouts/Sheet';
 import { RoomLayoutContext, RoomLayoutProvider, useRoomLayout } from './provider/roomLayoutProvider';
 import { DialogContainerProvider } from '../context/DialogContext';
@@ -308,6 +309,7 @@ function AppRoutes({
         {!isNotificationsDisabled && <FlyingEmoji />}
         <RemoteStopScreenshare />
         <KeyboardHandler />
+        <VBAutoLoader /> {/* Auto-load virtual background settings */}
         <AuthToken
           authTokenByRoomCodeEndpoint={authTokenByRoomCodeEndpoint}
           defaultAuthToken={defaultAuthToken}
