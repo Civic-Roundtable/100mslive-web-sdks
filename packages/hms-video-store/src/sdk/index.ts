@@ -1582,15 +1582,7 @@ export class HMSSdk implements HMSInterface {
    */
   private async getScreenshareTracks(onStop: () => void, config?: HMSScreenShareConfig) {
     const isOptimizedScreenShare = this.transport.isFlagEnabled(InitFlags.FLAG_SCALE_SCREENSHARE_BASED_ON_PIXELS);
-    const screenTracks = await this.localTrackManager.getLocalScreen(config, isOptimizedScreenShare);
-
-    // If the array is empty, it means the user canceled the screen share dialog
-    // Return an empty array to signal that no tracks were created
-    if (!screenTracks || screenTracks.length === 0) {
-      return [];
-    }
-
-    const [videoTrack, audioTrack] = screenTracks;
+    const [videoTrack, audioTrack] = await this.localTrackManager.getLocalScreen(config, isOptimizedScreenShare);
 
     const handleEnded = () => {
       this.stopEndedScreenshare(onStop);

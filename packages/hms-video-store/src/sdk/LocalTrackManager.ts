@@ -237,7 +237,6 @@ export class LocalTrackManager {
       }
     } catch (err) {
       HMSLogger.w(this.TAG, 'error in getting screenshare - ', err);
-
       const error = BuildGetMediaError(err as Error, HMSTrackExceptionTrackType.SCREEN);
       this.eventBus.analytics.publish(
         AnalyticsEventFactory.publish({
