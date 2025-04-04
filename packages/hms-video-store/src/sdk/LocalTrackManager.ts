@@ -242,7 +242,6 @@ export class LocalTrackManager {
         return [];
       }
 
-      // For all other errors, proceed with normal error handling
       const error = BuildGetMediaError(err as Error, HMSTrackExceptionTrackType.SCREEN);
       this.eventBus.analytics.publish(
         AnalyticsEventFactory.publish({
