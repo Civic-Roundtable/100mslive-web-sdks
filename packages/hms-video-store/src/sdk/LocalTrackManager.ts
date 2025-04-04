@@ -237,6 +237,12 @@ export class LocalTrackManager {
       }
     } catch (err) {
       HMSLogger.w(this.TAG, 'error in getting screenshare - ', err);
+      if ((err as Error).name === 'NotAllowedError' && (err as Error).message.includes('Permission denied')) {
+        // Return empty array to indicate no tracks were created
+        return [];
+      }
+
+      // For all other errors, proceed with normal error handling
       const error = BuildGetMediaError(err as Error, HMSTrackExceptionTrackType.SCREEN);
       this.eventBus.analytics.publish(
         AnalyticsEventFactory.publish({
