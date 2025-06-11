@@ -78,7 +78,7 @@ export class HMSNotifications<T extends HMSGenericTypes = { sessionStore: Record
     const deviceTypeMap = {
       audioOutput: 'Audio Output',
       audioInput: 'Audio Input',
-      video: 'Video'
+      video: 'Video',
     };
     const deviceType = deviceTypeMap[request.type];
     const notification = this.createNotification(
