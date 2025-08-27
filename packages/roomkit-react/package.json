@@ -72,7 +72,7 @@
     "storybook-dark-mode": "^3.0.0"
   },
   "peerDependencies": {
-    "react": ">=17.0.2 <19.0.0"
+    "react": ">=17.0.2 <20.0.0"
   },
   "dependencies": {
     "@100mslive/hls-player": "0.3.32",
